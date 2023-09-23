@@ -22,6 +22,14 @@ const TodoApp = () => {
     setNewDescription("");
   };
 
+  const handleDelete=index=>{
+    let reduceTodo=[...allTodos];
+    reduceTodo.splice(index);
+
+    localStorage.setItem('todolist',JSON.stringify(reduceTodo));
+    setAllTodos(reduceTodo);
+  }
+
   useEffect(() => {
     let savedTodo = JSON.parse(localStorage.getItem("todolist"));
     if (savedTodo) {
@@ -102,7 +110,7 @@ const TodoApp = () => {
                 <p className="text-dark">{item.description}</p>
               </div>
               <div className="d-flex me-2 mt-2">
-                <h3 className="text-danger me-2" style={{ cursor: "pointer" }}>
+                <h3 className="text-danger me-2" onClick={()=>handleDelete(index)} style={{ cursor: "pointer" }}>
                   <i className="bi bi-trash"></i>
                 </h3>
                 <h3 className="text-success" style={{ cursor: "pointer" }}>
