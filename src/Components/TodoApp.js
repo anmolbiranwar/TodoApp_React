@@ -4,6 +4,7 @@ const TodoApp = () => {
   const [allTodos, setAllTodos] = useState([]);
   const [newTitle, setNewTitle] = useState("");
   const [newDescription, setNewDescription] = useState("");
+  const [completedTodos, setCompletedTodos] = useState([]);
 
   const handleAddTodo = () => {
     let newTodoItem = {
@@ -22,13 +23,18 @@ const TodoApp = () => {
     setNewDescription("");
   };
 
-  const handleDelete=index=>{
-    let reduceTodo=[...allTodos];
-    reduceTodo.splice(index);
+  const handleDelete = (index) => {
+    let reduceTodo = [...allTodos];
+    reduceTodo.splice(index, 1);
 
-    localStorage.setItem('todolist',JSON.stringify(reduceTodo));
+    localStorage.setItem("todolist", JSON.stringify(reduceTodo));
     setAllTodos(reduceTodo);
-  }
+  };
+
+  const handleComplete = (index) => {
+    let updatedCompletedTodos = [...completedTodos, index];
+    setCompletedTodos(updatedCompletedTodos);
+  };
 
   useEffect(() => {
     let savedTodo = JSON.parse(localStorage.getItem("todolist"));
@@ -41,7 +47,7 @@ const TodoApp = () => {
     <>
       <h1 className="bg-success text-white text-center m-2 p-2">My Todos</h1>
       <form className="row border rounded p-2 mt-3 ms-5 me-5">
-        <div className="col d-flex">
+      <div className="col d-flex">
           <label htmlFor="title" className="fs-3 me-2">
             Title
           </label>
@@ -86,40 +92,41 @@ const TodoApp = () => {
           </button>
         </div>
       </form>
-      <div className="container mt-3">
-        <button type="button" className="btn btn-outline-primary fw-bold me-2">
-          Todo
-        </button>
-        <button type="button" className="btn btn-outline-success fw-bold">
-          Completed
-        </button>
-      </div>
 
       <div
-        className="border rounded container mt-3"
-        style={{ maxHeight: "400px", overflowY: "auto" }}
-      >
-        {allTodos.map((item, index) => {
-          return (
-            <div
-              className="bg-light text-white d-flex justify-content-between p-2 m-2 "
-              key={index}
-            >
-              <div className="ms-2">
-                <h5 className="text-success">{item.title}</h5>
-                <p className="text-dark">{item.description}</p>
-              </div>
-              <div className="d-flex me-2 mt-2">
-                <h3 className="text-danger me-2" onClick={()=>handleDelete(index)} style={{ cursor: "pointer" }}>
-                  <i className="bi bi-trash"></i>
-                </h3>
-                <h3 className="text-success" style={{ cursor: "pointer" }}>
-                  <i className="bi bi-check-lg"></i>
-                </h3>
-              </div>
+      className="border rounded container mt-3"
+      style={{ maxHeight: "400px", overflowY: "auto" }}
+    >
+      {allTodos.map((item, index) => {
+        const isCompleted = completedTodos.includes(index);
+        return (
+          <div
+            className={`bg-light text-white d-flex justify-content-between p-2 m-2 ${isCompleted ? "text-decoration-line-through" : ""}`}
+            key={index}
+          >
+            <div className="ms-2">
+              <h5 className={`text-success ${isCompleted ? "completed-task" : ""}`}>{item.title}</h5>
+              <p className="text-dark">{item.description}</p>
             </div>
-          );
-        })}
+            <div className="d-flex me-2 mt-2">
+              <h3
+                className="text-danger me-2"
+                onClick={() => handleDelete(index)}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="bi bi-trash"></i>
+              </h3>
+              <h3
+                className="text-success"
+                onClick={() => handleComplete(index)}
+                style={{ cursor: "pointer" }}
+              >
+                <i className="bi bi-check-lg"></i>
+              </h3>
+            </div>
+          </div>
+        );
+      })}
       </div>
     </>
   );
